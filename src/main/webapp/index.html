@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验室钥匙申请</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <div class="brand">
+            <span class="brand-icon" aria-hidden="true">&#128273;</span>
+            <div>
+                <h1>实验室钥匙管理系统</h1>
+                <p>Laboratory Key Application</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="container layout">
+
+    <!-- ============ 申请卡片 ============ -->
+    <section class="card" id="apply-card">
+        <h2 class="card-title">钥匙申请</h2>
+        <p class="card-desc">请如实填写以下信息，提交后系统将生成申请编号，可凭编号查询审批状态。</p>
+
+        <div id="apply-banner" class="banner banner-error" role="alert" hidden></div>
+
+        <form id="apply-form" novalidate>
+            <div class="form-group">
+                <label for="name">姓名 <span class="required">*</span></label>
+                <input type="text" id="name" name="name" maxlength="20"
+                       autocomplete="name" placeholder="请输入真实姓名（2~20 个字符）">
+                <p class="field-error" data-error-for="name" hidden></p>
+            </div>
+
+            <div class="form-group">
+                <label for="studentNo">学号 <span class="required">*</span></label>
+                <input type="text" id="studentNo" name="studentNo" maxlength="12"
+                       inputmode="numeric" autocomplete="off" placeholder="请输入 8~12 位数字学号">
+                <p class="field-error" data-error-for="studentNo" hidden></p>
+            </div>
+
+            <div class="form-group">
+                <label for="lab">实验室 <span class="required">*</span></label>
+                <select id="lab" name="lab">
+                    <option value="">请选择实验室</option>
+                    <option value="人工智能实验室">人工智能实验室</option>
+                    <option value="嵌入式系统实验室">嵌入式系统实验室</option>
+                    <option value="网络安全实验室">网络安全实验室</option>
+                    <option value="数字媒体实验室">数字媒体实验室</option>
+                    <option value="集成电路实验室">集成电路实验室</option>
+                </select>
+                <p class="field-error" data-error-for="lab" hidden></p>
+            </div>
+
+            <div class="form-group">
+                <label for="useTime">使用时间 <span class="required">*</span></label>
+                <input type="datetime-local" id="useTime" name="useTime">
+                <p class="field-hint">仅限预约 30 天以内的时段</p>
+                <p class="field-error" data-error-for="useTime" hidden></p>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">申请理由</label>
+                <textarea id="reason" name="reason" rows="3" maxlength="200"
+                          placeholder="选填，例如：参与导师科研项目，需使用实验台设备（不超过 200 字）"></textarea>
+                <p class="field-error" data-error-for="reason" hidden></p>
+            </div>
+
+            <button type="submit" id="apply-submit" class="btn btn-primary btn-block">
+                <span class="btn-text">提交申请</span>
+                <span class="btn-loading" aria-hidden="true" hidden>提交中…</span>
+            </button>
+        </form>
+
+        <!-- 提交成功面板 -->
+        <div id="apply-success" class="result-panel result-success" hidden>
+            <h3>&#9989; 申请提交成功</h3>
+            <p class="result-line">您的申请编号：</p>
+            <p class="apply-no"><strong id="result-apply-no"></strong></p>
+            <p class="result-line">当前状态：<span id="result-status" class="badge badge-pending">待审核</span></p>
+            <p class="result-tip">请妥善保存申请编号，审批结果将在短时间内更新。</p>
+            <button type="button" id="goto-query" class="btn btn-outline">用此编号查询状态</button>
+            <button type="button" id="apply-again" class="btn btn-text">再提交一条申请</button>
+        </div>
+    </section>
+
+    <!-- ============ 查询卡片 ============ -->
+    <section class="card" id="query-card">
+        <h2 class="card-title">状态查询</h2>
+        <p class="card-desc">输入提交申请时获得的申请编号，实时查询审批状态。</p>
+
+        <div id="query-banner" class="banner banner-error" role="alert" hidden></div>
+
+        <form id="query-form" novalidate>
+            <div class="form-group">
+                <label for="query-apply-no">申请编号 <span class="required">*</span></label>
+                <input type="text" id="query-apply-no" name="applyNo"
+                       autocomplete="off" placeholder="如：LK20260910-483920">
+                <p class="field-error" data-error-for="applyNo" hidden></p>
+            </div>
+
+            <div class="query-actions">
+                <button type="submit" id="query-submit" class="btn btn-primary">
+                    <span class="btn-text">查询</span>
+                    <span class="btn-loading" aria-hidden="true" hidden>查询中…</span>
+                </button>
+                <label class="auto-refresh">
+                    <input type="checkbox" id="auto-refresh"> 自动刷新（每 5 秒）
+                </label>
+            </div>
+        </form>
+
+        <div id="status-result" class="result-panel" hidden>
+            <div class="result-head">
+                <h3>申请状态</h3>
+                <span id="query-status-badge" class="badge"></span>
+            </div>
+            <dl class="detail-list">
+                <div><dt>申请编号</dt><dd id="d-apply-no"></dd></div>
+                <div><dt>姓名</dt><dd id="d-name"></dd></div>
+                <div><dt>学号</dt><dd id="d-student-no"></dd></div>
+                <div><dt>实验室</dt><dd id="d-lab"></dd></div>
+                <div><dt>使用时间</dt><dd id="d-use-time"></dd></div>
+                <div><dt>提交时间</dt><dd id="d-created-at"></dd></div>
+            </dl>
+        </div>
+    </section>
+</main>
+
+<footer class="site-footer">
+    <p>实验室与设备管理处 · 数据仅保存在本服务内存中，重启即清空（演示环境）</p>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
