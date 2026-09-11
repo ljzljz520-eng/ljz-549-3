@@ -51,7 +51,9 @@
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.4.53.v20231009</version>
                 <configuration>
-                    <contextPath>/lab-key-apply</contextPath>
+                    <webApp>
+                        <contextPath>/lab-key-apply</contextPath>
+                    </webApp>
                     <httpConnector>
                         <port>8080</port>
                     </httpConnector>
